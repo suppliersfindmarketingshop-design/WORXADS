@@ -10,7 +10,7 @@ import emailjs from "@emailjs/browser";
 
 const SERVICE_ID = "YOUR_SERVICE_ID";
 const TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-const PUBLIC_KEY = "YOUR_PUBLIC_KEY";
+const PUBLIC_KEY = "maPiuM0aZeSfO0Bua";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Numele este obligatoriu").max(100),
