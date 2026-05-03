@@ -8,8 +8,8 @@ import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import emailjs from "@emailjs/browser";
 
-const SERVICE_ID = "YOUR_SERVICE_ID";
-const TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+const SERVICE_ID = "service_yedpj9b";
+const TEMPLATE_ID = template_2e00058";
 const PUBLIC_KEY = "maPiuM0aZeSfO0Bua";
 
 const contactSchema = z.object({
