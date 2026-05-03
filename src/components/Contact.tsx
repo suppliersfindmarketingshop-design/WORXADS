@@ -4,32 +4,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Mail, Phone, MapPin } from "lucide-react";
 import { useState } from "react";
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import emailjs from "@emailjs/browser";
+
+const SERVICE_ID = "YOUR_SERVICE_ID";
+const TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+const PUBLIC_KEY = "YOUR_PUBLIC_KEY";
 
 const contactSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(1, "Numele este obligatoriu")
-    .max(100, "Numele trebuie să aibă mai puțin de 100 caractere"),
-  email: z
-    .string()
-    .trim()
-    .email("Adresă de email invalidă")
-    .max(255, "Email-ul trebuie să aibă mai puțin de 255 caractere"),
-  phone: z
-    .string()
-    .trim()
-    .max(30, "Telefonul trebuie să aibă mai puțin de 30 caractere")
-    .optional()
-    .or(z.literal("")),
-  message: z
-    .string()
-    .trim()
-    .min(1, "Mesajul este obligatoriu")
-    .max(1000, "Mesajul trebuie să aibă mai puțin de 1000 caractere"),
+  name: z.string().trim().min(1, "Numele este obligatoriu").max(100),
+  email: z.string().trim().email("Adresă de email invalidă").max(255),
+  phone: z.string().trim().max(30).optional().or(z.literal("")),
+  message: z.string().trim().min(1, "Mesajul este obligatoriu").max(1000),
 });
 
 const Contact = () => {
@@ -44,7 +31,7 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const validation = contactSchema.safeParse(formData);
     if (!validation.success) {
       toast({
@@ -58,18 +45,21 @@ const Contact = () => {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("send-contact-email", {
-        body: formData,
-      });
-
-      if (error) throw error;
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message,
+        },
+        PUBLIC_KEY
+      );
 
       toast({
-        title: data?.warning ? "Mesaj Primit" : "Mesaj Trimis!",
-        description: data?.warning
-          ? String(data.warning)
-          : "Vă vom contacta în maxim 24 de ore.",
-        variant: data?.warning ? "default" : "default",
+        title: "Mesaj Trimis!",
+        description: "Vă vom contacta în maxim 24 de ore.",
       });
 
       setFormData({ name: "", email: "", phone: "", message: "" });
@@ -77,7 +67,7 @@ const Contact = () => {
       console.error("Error sending message:", error);
       toast({
         title: "Eroare",
-        description: error?.message ? String(error.message) : "Nu s-a putut trimite mesajul. Vă rugăm încercați din nou.",
+        description: "Nu s-a putut trimite mesajul. Vă rugăm încercați din nou.",
         variant: "destructive",
       });
     } finally {
@@ -152,10 +142,10 @@ const Contact = () => {
                   required
                 />
               </div>
-              <Button 
-                type="submit" 
-                variant="hero" 
-                size="xl" 
+              <Button
+                type="submit"
+                variant="hero"
+                size="xl"
                 className="w-full group"
                 disabled={isSubmitting}
               >
