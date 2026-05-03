@@ -9,7 +9,7 @@ import { z } from "zod";
 import emailjs from "@emailjs/browser";
 
 const SERVICE_ID = "service_yedpj9b";
-const TEMPLATE_ID = template_2e00058";
+const TEMPLATE_ID = "template_2e00058";
 const PUBLIC_KEY = "maPiuM0aZeSfO0Bua";
 
 const contactSchema = z.object({
